@@ -9,16 +9,26 @@ interface ProductInfo {
   link: string;
 }
 
+const queries = ["tennis+racket"];
+const pageNumbers = [...Array(10).keys()].map(i => i + 1);
+
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  await page.goto(root);
-  await page.setViewport({
-    width: 2000,
-    height: 1000
-  });
-  await page.type("#twotabsearchtextbox", "tennis rackets");
-  await page.click("input.nav-input");
+  for (const query of queries) {
+    for (const pageNumber of pageNumbers) {
+      await page.goto(`${root}/s?k=${query}&page=${pageNumber}`);
+      await page.setViewport({
+        width: 2000,
+        height: 1000
+      });
+      await processPage(page);
+    }
+  }
+  await browser.close();
+})();
+
+async function processPage(page: puppeteer.Page) {
   await sleep(2000);
   await autoScroll(page);
 
@@ -33,14 +43,14 @@ interface ProductInfo {
   }
 
   const uniqueResults = _.uniqBy(results, e => [e.src, e.link].join("--"));
+  // TODO: write to persistent store
   console.log(
     uniqueResults
       .map(({ src, link }) => `src=${src}\nlink=${link}`)
       .join("\n\n")
   );
   console.log(`found ${uniqueResults.length} images and links`);
-  await browser.close();
-})();
+}
 
 async function processBox(
   box: puppeteer.ElementHandle
