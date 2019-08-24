@@ -1,3 +1,5 @@
+import fs from "fs";
+
 import _ from "lodash";
 import puppeteer from "puppeteer";
 
@@ -16,22 +18,22 @@ const pageNumbers = [...Array(10).keys()].map(i => i + 1);
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   for (const query of queries) {
+    const stream = fs.createWriteStream(`${query}.txt`, { flags: "a" });
     for (const pageNumber of pageNumbers) {
       await page.goto(`${root}/s?k=${query}&page=${pageNumber}`);
       await page.setViewport({
         width: 2000,
         height: 1000
       });
-      await processPage(page);
+      await processPage(page, stream);
     }
+    stream.end();
   }
   await browser.close();
 })();
 
-async function processPage(page: puppeteer.Page) {
+async function processPage(page: puppeteer.Page, stream: fs.WriteStream) {
   await sleep(2000);
-  await autoScroll(page);
-
   const carouselBoxes = await page.$$("li.a-carousel-card");
   const productBoxes = await page.$$("div.a-section");
   const results: ProductInfo[] = [];
@@ -43,12 +45,14 @@ async function processPage(page: puppeteer.Page) {
   }
 
   const uniqueResults = _.uniqBy(results, e => [e.src, e.link].join("--"));
-  // TODO: write to persistent store
-  console.log(
-    uniqueResults
-      .map(({ src, link }) => `src=${src}\nlink=${link}`)
-      .join("\n\n")
+  stream.write(
+    uniqueResults.map(({ src, link }) => [src, link].join(",")).join("\n")
   );
+  // console.log(
+  //   uniqueResults
+  //     .map(({ src, link }) => `src=${src}\nlink=${link}`)
+  //     .join("\n\n")
+  // );
   console.log(`found ${uniqueResults.length} images and links`);
 }
 
