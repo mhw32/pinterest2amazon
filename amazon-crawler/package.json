@@ -1,7 +1,7 @@
 {
   "name": "amazon-crawler",
   "version": "1.0.0",
-  "description": "crawl amazon for images",
+  "description": "crawl amazon for images and links",
   "scripts": {
     "lint": "tslint ./src/**/*.ts",
     "fix": "tslint --fix ./src/**/*.ts",
