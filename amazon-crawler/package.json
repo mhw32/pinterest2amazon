@@ -1,0 +1,24 @@
+{
+  "name": "amazon-crawler",
+  "version": "1.0.0",
+  "description": "crawl amazon for images and links",
+  "scripts": {
+    "lint": "tslint ./src/**/*.ts",
+    "fix": "tslint --fix ./src/**/*.ts",
+    "start": "ts-node src/index.ts"
+  },
+  "author": "skl3",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^12.7.2",
+    "@types/puppeteer": "^1.19.1",
+    "pre-commit": "^1.2.2",
+    "prettier": "^1.18.2",
+    "puppeteer": "^1.19.0",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.19.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "typescript": "^3.5.3"
+  }
+}
