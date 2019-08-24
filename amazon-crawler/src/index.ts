@@ -11,13 +11,20 @@ interface ProductInfo {
   link: string;
 }
 
-const queries = ["tennis+racket"];
-const pageNumbers = [...Array(10).keys()].map(i => i + 1);
+const queries = [
+  "furniture"
+  // "men's+boat+shoes",
+  // "men's+loafers",
+  // "men's+boots",
+  // "tennis+racket",
+];
+const pageNumbers = [...Array(200).keys()].map(i => i + 1);
 
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   for (const query of queries) {
+    let count = 0;
     const stream = fs.createWriteStream(`${query}.txt`, { flags: "a" });
     for (const pageNumber of pageNumbers) {
       await page.goto(`${root}/s?k=${query}&page=${pageNumber}`);
@@ -25,15 +32,16 @@ const pageNumbers = [...Array(10).keys()].map(i => i + 1);
         width: 2000,
         height: 1000
       });
-      await processPage(page, stream);
+      count += await processPage(page, stream);
     }
+    console.log(`found ${count} items for ${query}`);
     stream.end();
   }
   await browser.close();
 })();
 
 async function processPage(page: puppeteer.Page, stream: fs.WriteStream) {
-  await sleep(2000);
+  await sleep(1000);
   const carouselBoxes = await page.$$("li.a-carousel-card");
   const productBoxes = await page.$$("div.a-section");
   const results: ProductInfo[] = [];
@@ -48,12 +56,8 @@ async function processPage(page: puppeteer.Page, stream: fs.WriteStream) {
   stream.write(
     uniqueResults.map(({ src, link }) => [src, link].join(",")).join("\n")
   );
-  // console.log(
-  //   uniqueResults
-  //     .map(({ src, link }) => `src=${src}\nlink=${link}`)
-  //     .join("\n\n")
-  // );
   console.log(`found ${uniqueResults.length} images and links`);
+  return uniqueResults.length;
 }
 
 async function processBox(
