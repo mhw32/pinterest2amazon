@@ -12,7 +12,14 @@ interface ProductInfo {
 }
 
 const queries = [
-  "furniture"
+  "men's+shirts",
+  "men's+pants",
+  "men's+shoes",
+  "women's+shirts",
+  "women's+pants",
+  "women's+dresses",
+  "women's+shoes",
+  // "furniture"
   // "men's+boat+shoes",
   // "men's+loafers",
   // "men's+boots",
@@ -25,7 +32,7 @@ const pageNumbers = [...Array(200).keys()].map(i => i + 1);
   const page = await browser.newPage();
   for (const query of queries) {
     let count = 0;
-    const stream = fs.createWriteStream(`${query}.txt`, { flags: "a" });
+    const stream = fs.createWriteStream(`csvs/${query}.txt`, { flags: "a" });
     for (const pageNumber of pageNumbers) {
       await page.goto(`${root}/s?k=${query}&page=${pageNumber}`);
       await page.setViewport({
