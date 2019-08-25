@@ -39,7 +39,8 @@ class BaseAgent(object):
         
         self._load_datasets()
         self.train_loader, self.train_len = self._create_dataloader(self.train_dataset, shuffle=True)
-        self.val_loader, self.val_len = self._create_dataloader(self.val_dataset, shuffle=False)
+        if self.config.validate:
+            self.val_loader, self.val_len = self._create_dataloader(self.val_dataset, shuffle=False)
 
         self._choose_device()
         self._create_model()
@@ -222,15 +223,15 @@ class TrainAgent(BaseAgent):
         super(TrainAgent, self).__init__(config)
         # initialize objects specific to local aggregation
         self._init_memory_bank()
-        self._init_cluster_labels()
-
-        self.km = None  # will be populated by a kmeans model
-
-        # if user did not specify kmeans_freq, then set to constant
-        if self.config.loss_params.kmeans_freq is None:
-            self.config.loss_params.kmeans_freq = (
-                len(self.train_dataset) // 
-                self.config.optim_params.batch_size)
+        self.cluster_labels = None
+        if self.config.loss_params.loss == 'LocalAggregationLoss':
+            self._init_cluster_labels()
+            self.km = None  # will be populated by a kmeans model
+            # if user did not specify kmeans_freq, then set to constant
+            if self.config.loss_params.kmeans_freq is None:
+                self.config.loss_params.kmeans_freq = (
+                    len(self.train_dataset) // 
+                    self.config.optim_params.batch_size)
 
         self.val_acc = []
         self.train_loss = []
@@ -304,19 +305,16 @@ class TrainAgent(BaseAgent):
         train_transforms, test_transforms = self._load_image_transforms()
 
         # build training dataset
-        train_dataset = load_datasets(self.config.data_params.name, split='train', 
-                                      image_transforms=train_transforms)
-        # build validation set
-        val_dataset = load_datasets(self.config.data_params.name, split='validation', 
-                                    image_transforms=test_transforms)
+        self.train_dataset = load_datasets(self.config.data_params.name, split='train', 
+                                           image_transforms=train_transforms)
+        if self.config.validate:
+            # build validation set
+            self.val_dataset = load_datasets(self.config.data_params.name, split='validation', 
+                                             image_transforms=test_transforms)
         
         # save some stuff to config
         self.config.data_params.n_channels = 3
-
-        self.train_dataset = train_dataset
-        self.val_dataset = val_dataset
-
-        train_samples = train_dataset.dataset.samples
+        train_samples = self.train_dataset.dataset.samples
         train_labels = [train_samples[i][1] for i in range(len(train_samples))]
         self.train_ordered_labels = np.array(train_labels)
 
