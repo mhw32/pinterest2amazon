@@ -3,7 +3,7 @@ import fs from "fs";
 import Path from "path";
 
 (async () => {
-  const buffer = await fs.readFileSync("furniture-dedupe.txt");
+  const buffer = await fs.readFileSync("csvs/women\'s+shoes-dedupe.txt");
   const rows = buffer.toString().split("\n");
   const imageLinkMap: {
     [filename: string]: { src: string; link: string };
