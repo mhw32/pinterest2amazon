@@ -2,11 +2,11 @@
     background-color: #f44336;
     border: none;
     color: white;
-    padding: 15px 32px;
+    padding: 8px 8px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: 12px;
 }
 
 .app_button {
