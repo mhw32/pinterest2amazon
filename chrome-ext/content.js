@@ -1,21 +1,21 @@
-// This part reacts to clicking the icon & open last visited tab
-// chrome.runtime.onMessage.addListener(
-//     function(request, sender, sendResponse) {
-//         if( request.message === "clicked_browser_action" ) {
-//             var firstHref = $("a[href^='http']").eq(0).attr("href");
-//             console.log(firstHref);
-//             chrome.runtime.sendMessage({"message": "open_new_tab", "url": firstHref});
-//         }
-//     }
-// );
-
 var oldParentDiv, newParentDiv, oldParentChildren, imageIndex, nextChild;
+var base64code = null;
 var prevDOM = null;  // Previous dom, that we want to track.
 var buttonElement = document.createElement("BUTTON");
 var buttonContent = document.createTextNode("Buy");
 buttonElement.setAttribute("id", "app_buy_button");
 buttonElement.setAttribute("class", "app_button")
 buttonElement.appendChild(buttonContent);
+
+function getBase64Image(img) {
+    var canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    var dataURL = canvas.toDataURL("image/png");
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
 
 // Mouse listener for any move event on the current document.
 document.addEventListener('mousemove', function (e) {
@@ -34,7 +34,19 @@ document.addEventListener('mousemove', function (e) {
         oldParentDiv = srcElement.parentElement;
         oldParentChildren = [...oldParentDiv.children];
         imageIndex = oldParentChildren.indexOf(srcElement);
-        
+
+        // add onclick function
+        function sendURLToBackground() {
+            base64code = getBase64Image(srcElement);
+            console.log(base64code);
+            chrome.runtime.sendMessage({
+                "message": "download_image", 
+                "url": srcElement.src,
+                "code": base64code,
+            });
+        }
+        buttonElement.onclick = function() { sendURLToBackground(); };
+
         if (srcElement.parentElement.className != "app_wrap_div") {
             if (oldParentChildren.length > imageIndex + 1) {
                 // If more children exist after element...

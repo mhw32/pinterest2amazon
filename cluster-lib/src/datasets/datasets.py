@@ -4,11 +4,10 @@ import os
 import torch
 
 from src.datasets.base import BaseDataset
+from src.utils.constants import DATA_DIR as AMAZON_DIR
 
-AMAZON_DIR = '/mnt/fs5/wumike/datasets/pinterest2amazon/amazon'
 
-
-def load_dataset(name, split='train', image_transforms=None):
+def load_datasets(name, split='train', image_transforms=None):
     # Master function for loading data
     if name == 'amazon':
         return AmazonDataset(split=split, image_transforms=image_transforms)
