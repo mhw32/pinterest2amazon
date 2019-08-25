@@ -6,8 +6,10 @@ interface ProductInfo {
   link: string;
 }
 
+const filename = 'csvs/women\'s+pants';
+
 (async () => {
-  const buffer = await fs.readFileSync("furniture.txt");
+  const buffer = await fs.readFileSync(`${filename}.txt`);
   const rows = buffer.toString().split("\n");
   console.log(`found ${rows.length} rows`);
   const foundLinks = new Set<string>();
@@ -38,7 +40,7 @@ interface ProductInfo {
   }
   console.log(`${uniqueProducts.length} uniq products after deduping`);
   await fs.writeFileSync(
-    "furniture-dedupe.txt",
+    `${filename}-dedupe.txt`,
     uniqueProducts.map(({ src, link }) => [src, link].join(",")).join("\n")
   );
 })();
