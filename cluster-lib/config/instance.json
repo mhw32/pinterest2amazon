@@ -23,7 +23,7 @@
         "loss": "InstanceDiscriminationLoss"
     },
     "optim_params": {
-        "batch_size": 32, 
+        "batch_size": 16, 
         "learning_rate": 0.03,
         "momentum": 0.9,
         "weight_decay": 1e-4,
