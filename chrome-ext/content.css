@@ -1,0 +1,21 @@
+#app_buy_button {
+    background-color: #f44336;
+    border: none;
+    color: white;
+    padding: 8px 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+}
+
+.app_button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+
+.app_wrap_div {
+    position: relative;
+}
