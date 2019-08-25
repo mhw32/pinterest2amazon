@@ -16,7 +16,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('exp_dir', type=str, 
-                        default='where trained models are saved')
+                        help='where trained models are saved')
     args = parser.parse_args()
 
     logger = logging.getLogger("Visualizer")
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     bank = agent.get_memory_bank()._bank.cpu().numpy()
     logger.info("Fitting MDS model")
     embedding = MDS(n_components=2)
-    bank = embedding.fit_transformbank)
+    bank = embedding.fit_transform(bank)
 
     viz_dir = os.path.join(exp_dir, 'plots')
     os.makedirs(viz_dir, exist_ok=True)
