@@ -16,6 +16,7 @@ if __name__ == "__main__":
                         help='number of nearest neighbours [default: 1]')
     args = parser.parse_args()
 
+    checkpoint_name = 'final.pth.tar'
     checkpoint_path = os.path.join(args.exp_dir, 'checkpoints', checkpoint_name)
     checkpoint = torch.load(checkpoint_path, map_location=lambda storage, location: storage)
     config = checkpoint['config']
@@ -32,13 +33,14 @@ if __name__ == "__main__":
     image = image.unsqueeze(0)
     image = image.to(agent.device)
 
-    outputs = self.model(image)
+    outputs = agent.model(image)
     all_dps = agent.memory_bank.get_all_dot_products(outputs)
     _, indices = torch.topk(all_dps, k=args.k, sorted=False, dim=1)
+    indices = indices.flatten().cpu().numpy()
 
     paths = []
     for index in indices:
-        path, target = agent.train_dataset.samples[index]
+        path, target = agent.train_dataset.dataset.samples[index]
         paths.append(path)
 
     with open('./neighbors.json', 'w') as fp:

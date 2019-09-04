@@ -18,10 +18,10 @@
         "resnet_version": "resnet18"
     },
     "loss_params": {
-        "k": 4096,
+        "k": 100,
         "t": 0.07,
         "m": 0.5,
-        "kmeans_k": 100,
+        "kmeans_k": 50,
         "n_kmeans": 10,
         "kmeans_freq": null,
         "loss": "LocalAggregationLoss"
@@ -34,8 +34,8 @@
         "validate_freq": 1,
         "patience": 10
     },
-    "num_epochs": 100,
+    "num_epochs": 500,
     "validate": false,
     "copy_checkpoint_freq": 10,
-    "instance_exp_dir": null
+    "instance_exp_dir": "/mnt/fs5/wumike/pinterest2amazon/trained_models/8_24/experiments/amazon_ir/2019-08-24--21_21_44"
 }
